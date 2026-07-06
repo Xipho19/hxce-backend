@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hxce.api.dao.UserDao">
+    <select id="existByPhone" parameterType="Map" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM tb_user
+            WHERE  phone = #{phone}
+            AND status = 1
+            <if test="id!=null">
+                AND id != #{id}
+            </if>
+        )
+    </select>
+    <select id="login" parameterType="String" resultType="Long">
+        SELECT id
+        FROM tb_user
+        WHERE phone=#{phone}
+            AND status=1
+    </select>
+
+    <select id="searchUserInfoById" parameterType="long" resultType="HashMap">
+        SELECT name,
+               photo,
+               gender,
+               phone
+        FROM tb_user
+        WHERE id = #{id}
+    </select>
+    <select id="searchByPage" parameterType="Map" resultType="HashMap">
+         SELECT id,
+                name,
+                photo,
+                gender,
+                phone,
+                JSON_LENGTH(roles) AS associatedRoles,
+                status
+         FROM tb_user
+         <where>
+            <if test="name!=null">
+                name LIKE CONCAT("%",#{name},"%")
+            </if>
+            <if test="roleId!=null">
+                AND JSON_CONTAINS(roles,CONVERT(#{roleId},CHAR))
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+         </where>
+          ORDER BY id
+          LIMIT #{start},#{size}
+    </select>
+    <select id="searchCount" parameterType="Map" resultType="long">
+        SELECT COUNT(*)
+            FROM tb_user
+        <where>
+            <if test="name!=null">
+                name LIKE CONCAT("%",#{name},"%")
+            </if>
+            <if test="roleId!=null">
+                AND JSON_CONTAINS(roles,CONVERT(#{roleId},CHAR))
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+    <insert id="insert" parameterType="com.example.hxce.api.pojo.UserEntity">
+        INSERT INTO tb_user
+        SET name=#{name},
+            gender=#{gender},
+            phone=#{phone},
+            roles=#{roles},
+            status=#{status}
+
+    </insert>
+    <select id="searchById" parameterType="long" resultType="HashMap">
+        SELECT name,
+               gender,
+               phone,
+               roles,
+               status
+        FROM tb_user
+        WHERE id = #{id}
+    </select>
+    <update id="update" parameterType="Map">
+        UPDATE tb_user
+        SET name=#{name},
+            gender=#{gender},
+            phone=#{phone},
+            roles=#{roles},
+            status=#{status}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteByIds">
+        DELETE FROM tb_user
+        WHERE id IN
+        <foreach collection="ids" item="one" open="(" close=")" separator=",">
+            #{one}
+        </foreach>
+    </delete>
+</mapper>

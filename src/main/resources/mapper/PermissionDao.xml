@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hxce.api.dao.PermissionDao">
+    <select id="searchUserPermissions" resultType="String" parameterType="Long">
+        SELECT p.permission_code AS permissionCode
+        FROM tb_user u
+                 JOIN tb_role r ON JSON_CONTAINS(u.roles, CAST(r.id AS CHAR))
+                 JOIN tb_permission p ON JSON_CONTAINS(r.permissions, CAST(p.id AS CHAR))
+        WHERE u.id = #{userId}
+    </select>
+</mapper>

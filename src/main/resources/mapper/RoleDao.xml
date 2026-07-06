@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hxce.api.dao.RoleDao">
+    <select id="searchUserRoles" parameterType="Long" resultType="String">
+        SELECT r.role_name AS roleName
+        FROM tb_user u JOIN tb_role r ON JSON_CONTAINS(u.roles, CAST(r.id AS CHAR))
+        WHERE u.id = #{userId}
+    </select>
+    <select id="searchAllRole" resultType="HashMap">
+        SELECT id,
+               role_name AS roleName
+        FROM tb_role
+        ORDER BY id;
+    </select>
+
+</mapper>

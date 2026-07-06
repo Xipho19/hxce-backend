@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.hxce.api.dao.ExerciseDao">
+    <insert id="insert" parameterType="com.example.hxce.api.pojo.ExerciseEntity">
+        INSERT INTO tb_exercise
+        SET user_id=#{userId},
+            uuid= #{uuid},
+            knowledge= #{knowledge},
+            exercise= #{exercise},
+            difficulty= #{difficulty},
+            question_num= #{questionNum},
+            create_time= NOW()
+    </insert>
+    <select id="searchByUuid" parameterType="String" resultType="String">
+        SELECT exercise
+        FROM   tb_exercise
+        WHERE  uuid= #{uuid}
+
+    </select>
+
+</mapper>
