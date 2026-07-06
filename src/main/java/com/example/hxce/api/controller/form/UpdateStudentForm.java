@@ -2,10 +2,10 @@ package com.example.hxce.api.controller.form;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 @Data
 public class UpdateStudentForm {
@@ -25,6 +25,6 @@ public class UpdateStudentForm {
     @Email(message = "email不正确")
     private String email;
 
-    @Pattern(regexp = "^[01]$", message = "status不正确")
-    private String status;
+    @Range(min = 1, max = 3, message = "status必须为1~3之间的整数")
+    private Byte status;
 }
