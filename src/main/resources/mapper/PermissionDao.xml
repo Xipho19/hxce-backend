@@ -10,4 +10,13 @@
                  JOIN tb_permission p ON JSON_CONTAINS(r.permissions, CAST(p.id AS CHAR))
         WHERE u.id = #{userId}
     </select>
+    <select id="searchAllPermission" resultType="HashMap">
+        SELECT p.id, 
+               m.module_name AS moduleName, 
+               p.permission_name AS permissionName, 
+               p.permission_code AS permissionCode
+        FROM tb_permission p
+        LEFT JOIN tb_module m ON p.module_id = m.id
+        ORDER BY m.module_name, p.id
+    </select>
 </mapper>

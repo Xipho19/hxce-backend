@@ -14,5 +14,87 @@
         FROM tb_role
         ORDER BY id;
     </select>
-
+    <select id="searchByPage" parameterType="Map" resultType="HashMap">
+         SELECT id,
+                role_name AS roleName,
+                remark,
+                systemic,
+                status,
+                0 AS userCount,
+                (CASE WHEN permissions IS NOT NULL THEN JSON_LENGTH(permissions) ELSE 0 END) AS permissions
+         FROM tb_role
+         <where>
+            <if test="roleName!=null">
+                role_name LIKE CONCAT("%",#{roleName},"%")
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+         </where>
+          ORDER BY id
+          LIMIT #{start},#{size}
+    </select>
+    <select id="searchCount" parameterType="Map" resultType="long">
+        SELECT COUNT(*)
+            FROM tb_role
+        <where>
+            <if test="roleName!=null">
+                role_name LIKE CONCAT("%",#{roleName},"%")
+            </if>
+            <if test="status!=null">
+                AND status = #{status}
+            </if>
+        </where>
+    </select>
+    <select id="searchById" parameterType="long" resultType="HashMap">
+        SELECT id,
+               role_name AS roleName,
+               remark,
+               status,
+               permissions
+        FROM tb_role
+        WHERE id = #{id}
+    </select>
+    <select id="searchRoleUsers" parameterType="long" resultType="HashMap">
+        SELECT id,
+               name,
+               photo,
+               status
+        FROM tb_user u
+        WHERE JSON_CONTAINS(roles, CAST(#{id} AS CHAR))
+          AND u.status = 1
+    </select>
+    <select id="checkRoleNameConflict" parameterType="Map" resultType="boolean">
+        SELECT EXISTS(
+            SELECT 1
+            FROM tb_role
+            WHERE role_name = #{roleName}
+            <if test="id!=null">
+                AND id != #{id}
+            </if>
+        )
+    </select>
+    <insert id="insertRole" parameterType="com.example.hxce.api.pojo.RoleEntity">
+        INSERT INTO tb_role
+        SET role_name=#{roleName},
+            remark=#{remark},
+            status=#{status},
+            permissions=#{permissions},
+            systemic=#{systemic}
+    </insert>
+    <update id="update" parameterType="Map">
+        UPDATE tb_role
+        SET role_name=#{roleName},
+            remark=#{remark},
+            status=#{status},
+            permissions=#{permissions}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteByIds">
+        DELETE FROM tb_role
+        WHERE id IN
+        <foreach collection="ids" item="one" open="(" close=")" separator=",">
+            #{one}
+        </foreach>
+    </delete>
 </mapper>

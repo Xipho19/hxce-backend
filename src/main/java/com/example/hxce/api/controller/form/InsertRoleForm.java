@@ -13,4 +13,6 @@ public class InsertRoleForm {
 
     @NotEmpty(message = "permissions不能为空")
     private Integer[] permissions;
+    
+    private String remark;
 }

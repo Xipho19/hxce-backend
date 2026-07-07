@@ -74,6 +74,14 @@ public class StudentController {
     @SaCheckPermission(value={"ROOT","STUDENT:SELECT"},mode=SaMode.OR)
     public R searchById(@RequestBody @Validated SearchStudentByIdForm form){
         HashMap map = studentService.searchById(form.getId());
+        System.out.println("查询学生详情的原始数据：" + map);
+        // 转换 status 字段，返回数字，方便前端编辑时转换
+        Object statusObj = map.get("status");
+        if (statusObj != null) {
+            int status = Integer.parseInt(statusObj.toString());
+            map.put("status", status);
+        }
+        System.out.println("查询学生详情的处理后数据：" + map);
         return R.ok(map);
     }
 
@@ -81,6 +89,11 @@ public class StudentController {
     @SaCheckPermission(value={"ROOT","STUDENT:UPDATE"},mode=SaMode.OR)
     public R update(@RequestBody @Validated UpdateStudentForm form){
         Map <String,Object> param=BeanUtil.beanToMap(form);
+        System.out.println("更新学生的参数：" + param);
+        // 处理 status 字段类型
+        if (form.getStatus() != null) {
+            param.put("status", form.getStatus().byteValue());
+        }
         studentService.update(param);
         return R.ok();
     }

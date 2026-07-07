@@ -85,8 +85,27 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void insert(Map param) {
-        StudentEntity entity = BeanUtil.toBean(param, StudentEntity.class);
+        System.out.println("添加学生的参数：" + param);
+        StudentEntity entity = new StudentEntity();
+        entity.setName((String) param.get("name"));
+        entity.setGender((String) param.get("gender"));
+        entity.setPhone((String) param.get("phone"));
+        entity.setEmail((String) param.get("email"));
+
+        // 处理 status，可能是 Integer 类型
+        Object statusObj = param.get("status");
+        if (statusObj != null) {
+            if (statusObj instanceof Integer) {
+                entity.setStatus(((Integer) statusObj).byteValue());
+            } else if (statusObj instanceof Byte) {
+                entity.setStatus((Byte) statusObj);
+            } else {
+                entity.setStatus(Byte.parseByte(statusObj.toString()));
+            }
+        }
+
         int rows = studentDao.insertStudent(entity);
+        System.out.println("添加学生的数据库结果行数：" + rows);
         if (rows != 1) {
             throw new RuntimeException("添加学生失败");
         }
@@ -106,7 +125,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void update(Map param) {
+        System.out.println("更新学生的参数：" + param);
         int rows = studentDao.update(param);
+        System.out.println("更新学生的数据库结果行数：" + rows);
         if (rows != 1) {
             throw new RuntimeException("数据更新失败");
         }

@@ -20,9 +20,17 @@ public class PermissionController {
     @GetMapping("/searchSystemicPermissions")
     @SaCheckLogin
     public R searchSystemicPermissions() {
+        System.out.println("======== searchSystemicPermissions 被调用 ========");
         ArrayList<HashMap> list = permissionService.searchAllPermission();
-        return R.ok(new HashMap<>() {{
-            put("permissions", list);
-        }});
+        System.out.println("查询到的权限数据数量：" + (list != null ? list.size() : 0));
+        if (list != null && list.size() > 0) {
+            for (HashMap item : list) {
+                System.out.println("权限模块：" + item);
+            }
+        }
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("permissions", list);
+        System.out.println("返回的完整结果：" + result);
+        return R.ok(result);
     }
 }

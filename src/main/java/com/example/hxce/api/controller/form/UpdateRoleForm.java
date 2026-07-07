@@ -17,4 +17,8 @@ public class UpdateRoleForm {
 
     @NotEmpty(message = "permissions不能为空")
     private Integer[] permissions;
+    
+    private String remark;
+    
+    private Integer status;
 }
