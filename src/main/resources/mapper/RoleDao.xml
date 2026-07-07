@@ -20,7 +20,10 @@
                 remark,
                 systemic,
                 status,
-                0 AS userCount,
+                (SELECT COUNT(*) 
+                 FROM tb_user u 
+                 WHERE JSON_CONTAINS(u.roles, CAST(tb_role.id AS CHAR)) 
+                   AND u.status = 1) AS userCount,
                 (CASE WHEN permissions IS NOT NULL THEN JSON_LENGTH(permissions) ELSE 0 END) AS permissions
          FROM tb_role
          <where>
